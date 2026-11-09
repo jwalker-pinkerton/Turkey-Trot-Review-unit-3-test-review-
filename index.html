@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Turkey Trot Review: Solving Quadratics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:ital,wght@0,500;0,700;0,800;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cloth:#F3E3C7; --check:rgba(150,32,52,.16);
+  --ink:#3A2117; --soft:#7A5A45;
+  --plate:#FFFCF5; --rim:#E6D2AE; --rim2:#CDB28A;
+  --mat:#FFF8EA; --matEdge:#E2C99D;
+  --cran:#962034; --pump:#C9551A; --gold:#D99A12; --sage:#3F6B2E;
+  --good:#2F7A3A; --goodBg:#E3F2DC; --bad:#A8262F; --badBg:#F8DEDD;
+  --shadow:0 2px 0 rgba(90,50,20,.18), 0 8px 18px rgba(90,50,20,.14);
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --cloth:#24150F; --check:rgba(230,120,60,.09);
+    --ink:#F6E8D2; --soft:#C9AE92;
+    --plate:#3B291E; --rim:#5C412D; --rim2:#77573D;
+    --mat:#2F2017; --matEdge:#5A3F2B;
+    --cran:#F07C8C; --pump:#F08A4B; --gold:#F2BE4A; --sage:#9CC27F;
+    --good:#8FD48F; --goodBg:#1F3A22; --bad:#FF8F8F; --badBg:#45201F;
+    --shadow:0 2px 0 rgba(0,0,0,.4), 0 8px 18px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --cloth:#24150F; --check:rgba(230,120,60,.09);
+  --ink:#F6E8D2; --soft:#C9AE92;
+  --plate:#3B291E; --rim:#5C412D; --rim2:#77573D;
+  --mat:#2F2017; --matEdge:#5A3F2B;
+  --cran:#F07C8C; --pump:#F08A4B; --gold:#F2BE4A; --sage:#9CC27F;
+  --good:#8FD48F; --goodBg:#1F3A22; --bad:#FF8F8F; --badBg:#45201F;
+  --shadow:0 2px 0 rgba(0,0,0,.4), 0 8px 18px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; color:var(--ink); font-family:"Nunito",system-ui,sans-serif; font-weight:500;
+  background-color:var(--cloth);
+  background-image:
+    repeating-linear-gradient(0deg,var(--check) 0 28px,transparent 28px 56px),
+    repeating-linear-gradient(90deg,var(--check) 0 28px,transparent 28px 56px);
+  min-height:100vh;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pump);outline-offset:3px}
+.display{font-family:"Lilita One","Arial Rounded MT Bold",system-ui,sans-serif;font-weight:400;letter-spacing:.01em}
+.wrap{max-width:1280px;margin:0 auto;padding:16px clamp(10px,2.5vw,28px) 40px}
+header.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+header.top h1{margin:0;font-size:clamp(26px,3.4vw,40px);color:var(--cran);line-height:1}
+header.top .unit{color:var(--soft);font-weight:700;font-size:15px}
+header.top .tools{margin-left:auto;display:flex;gap:8px}
+.chip{background:var(--mat);border:2px solid var(--matEdge);border-radius:999px;padding:7px 14px;font-weight:800;font-size:14px}
+.chip:hover{border-color:var(--pump)}
+
+/* setup */
+.setup{max-width:760px;margin:4vh auto 0;background:var(--mat);border:3px solid var(--matEdge);border-radius:28px;padding:clamp(20px,4vw,44px);box-shadow:var(--shadow);text-align:center}
+.setup .big{font-size:clamp(52px,9vw,96px);color:var(--cran);margin:0;line-height:.95}
+.setup .turkey{font-size:clamp(60px,10vw,110px);display:block;line-height:1;margin-bottom:6px}
+.setup p.lede{font-size:18px;color:var(--soft);margin:10px auto 26px;max-width:52ch}
+.field{margin:18px 0;text-align:left}
+.field>label,.field>.lbl{display:block;font-weight:800;margin-bottom:8px;font-size:16px}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg button{flex:1;min-width:64px;padding:10px;border-radius:14px;border:2px solid var(--matEdge);background:var(--plate);font-weight:800;font-size:17px}
+.seg button[aria-pressed="true"]{background:var(--cran);border-color:var(--cran);color:#fff}
+:root[data-theme="dark"] .seg button[aria-pressed="true"]{color:#2A1610}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg button[aria-pressed="true"]{color:#2A1610}}
+.names{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.names input{width:100%;padding:11px 12px;border-radius:12px;border:2px solid var(--matEdge);background:var(--plate);color:var(--ink);font:inherit;font-weight:700;font-size:16px;border-left-width:10px}
+.go{margin-top:22px;background:var(--pump);color:#fff;border:0;border-radius:18px;padding:16px 34px;font-size:24px;box-shadow:0 4px 0 rgba(120,40,0,.35)}
+.go:hover{filter:brightness(1.06)}
+.go:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(120,40,0,.35)}
+.how{margin-top:26px;text-align:left;font-size:15px;color:var(--soft);line-height:1.55}
+.how b{color:var(--ink)}
+
+/* board */
+.boardScroll{overflow-x:auto;padding-bottom:6px}
+.board{display:grid;grid-template-columns:repeat(6,minmax(128px,1fr));gap:12px 10px;min-width:820px}
+.cat{text-align:center;padding:8px 4px 2px}
+.cat .dish{font-size:34px;display:block;line-height:1.1}
+.cat .nm{font-family:"Lilita One",system-ui,sans-serif;font-size:clamp(15px,1.45vw,19px);color:var(--sage);line-height:1.1;display:block;margin-top:2px}
+.cat .sk{font-size:13px;color:var(--soft);font-weight:700}
+.plateBtn{aspect-ratio:1/1;width:min(100%,128px);justify-self:center;border-radius:50%;border:0;padding:0;position:relative;
+  background:radial-gradient(circle at 50% 50%,var(--plate) 0 54%,var(--rim) 55% 57%,var(--plate) 58% 86%,var(--rim2) 87% 100%);
+  box-shadow:var(--shadow);transition:transform .15s ease}
+.plateBtn:hover:not(:disabled){transform:translateY(-3px) rotate(-3deg)}
+.plateBtn .pts{font-family:"Lilita One",system-ui,sans-serif;font-size:clamp(22px,2.4vw,32px);color:var(--cran)}
+.plateBtn:disabled{cursor:default}
+.plateBtn.eaten .pts{display:none}
+.plateBtn .ate{font-size:clamp(28px,3vw,40px);filter:saturate(.85)}
+.plateBtn .who{position:absolute;bottom:13%;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;padding:1px 8px;border-radius:999px;color:#fff;white-space:nowrap;max-width:80%;overflow:hidden;text-overflow:ellipsis}
+.plateBtn.missed .ate{opacity:.35}
+
+/* teams + trot */
+.trot{margin-top:22px;background:var(--mat);border:3px solid var(--matEdge);border-radius:22px;padding:14px clamp(12px,2vw,22px);box-shadow:var(--shadow)}
+.trotHead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.trotHead h2{margin:0;font-size:22px;color:var(--pump)}
+.upnext{margin-left:auto;font-weight:800;font-size:17px}
+.lane{display:grid;grid-template-columns:minmax(120px,190px) 1fr auto;align-items:center;gap:12px;padding:8px 6px;border-radius:14px}
+.lane.active{background:color-mix(in srgb,var(--gold) 20%,transparent)}
+.tname{font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;min-width:0}
+.tname .dot{width:14px;height:14px;border-radius:50%;flex:none}
+.tname span.t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{position:relative;height:44px;border-radius:999px;background:repeating-linear-gradient(90deg,var(--plate) 0 22px,color-mix(in srgb,var(--rim) 60%,var(--plate)) 22px 44px);border:2px solid var(--rim)}
+.track .finish{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:24px}
+.runner{position:absolute;top:50%;font-size:32px;transform:translate(-50%,-55%) scaleX(-1);transition:left 1.1s cubic-bezier(.3,1.4,.5,1)}
+.runner.hop{animation:hop .5s ease 2}
+@keyframes hop{50%{transform:translate(-50%,-95%) scaleX(-1)}}
+.score{display:flex;align-items:center;gap:6px}
+.score .n{font-family:"Lilita One",system-ui,sans-serif;font-size:28px;min-width:3.2ch;text-align:right}
+.adj{border:2px solid var(--matEdge);background:var(--plate);border-radius:10px;width:30px;height:30px;font-weight:800;line-height:1;padding:0}
+.feast{grid-column:2/4;font-size:20px;min-height:0;letter-spacing:2px;margin-top:-4px}
+
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(40,18,8,.55);display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) 12px 24px;overflow-y:auto;z-index:20}
+.card{background:var(--mat);border:4px solid var(--matEdge);border-radius:28px;width:min(980px,100%);box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;animation:pop .28s cubic-bezier(.3,1.5,.6,1)}
+@keyframes pop{from{transform:scale(.92);opacity:0}}
+.cardHead{display:flex;align-items:center;gap:12px;padding:14px 22px;background:var(--cran);color:#fff}
+:root[data-theme="dark"] .cardHead{color:#2A1610}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cardHead{color:#2A1610}}
+.cardHead .cd{font-size:30px}
+.cardHead .ct{font-family:"Lilita One",system-ui,sans-serif;font-size:22px;line-height:1.1}
+.cardHead .cs{font-size:14px;font-weight:700;opacity:.9}
+.cardHead .val{margin-left:auto;font-family:"Lilita One",system-ui,sans-serif;font-size:28px;background:rgba(255,255,255,.18);padding:2px 14px;border-radius:12px}
+.cardBody{padding:clamp(16px,3vw,30px)}
+.turnLine{font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.turnLine .dot{width:14px;height:14px;border-radius:50%}
+.instr{font-size:19px;font-weight:800;color:var(--soft);margin:14px 0 6px}
+.expr{font-size:clamp(30px,5vw,56px);font-weight:700;text-align:center;padding:18px 8px 24px;line-height:1.3;overflow-x:auto}
+.math i{font-style:italic;font-weight:700}
+.math sup{font-size:.62em;vertical-align:.55em;line-height:0}
+.rad{display:inline-flex;align-items:flex-start;white-space:nowrap}
+.rad .rs{padding-right:.04em}
+.rad .rn{border-top:.08em solid currentColor;padding:0 .12em;margin-top:.12em;line-height:1.05}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .12em;font-size:.88em}
+.frac .ft{padding:0 .2em .06em;border-bottom:.07em solid currentColor;line-height:1.15}
+.frac .fb{padding-top:.06em;line-height:1.15}
+.or{font-family:"Nunito",sans-serif;font-weight:800;font-size:.75em;color:var(--soft);margin:0 .35em}
+.timer{height:10px;border-radius:999px;background:var(--rim);overflow:hidden;margin:4px 0 16px}
+.timer>div{height:100%;background:var(--sage);transition:width .25s linear}
+.timer.low>div{background:var(--bad)}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:640px){.choices{grid-template-columns:1fr}.lane{grid-template-columns:1fr auto}.lane .track{grid-column:1/3;grid-row:2}.feast{grid-column:1/3}}
+.choice{display:flex;align-items:center;gap:14px;text-align:left;background:var(--plate);border:3px solid var(--rim);border-radius:18px;padding:14px 16px;font-size:clamp(19px,2.3vw,27px);min-height:76px;transition:transform .12s, border-color .12s}
+.choice:hover:not(:disabled){border-color:var(--pump);transform:translateY(-2px)}
+.choice .ltr{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--rim);font-family:"Lilita One",system-ui,sans-serif;font-size:20px;color:var(--ink)}
+.choice:disabled{cursor:default}
+.choice.dim{opacity:.4}
+.choice.right{border-color:var(--good);background:var(--goodBg)}
+.choice.right .ltr{background:var(--good);color:var(--mat)}
+.choice.wrong{border-color:var(--bad);background:var(--badBg)}
+.choice.wrong .ltr{background:var(--bad);color:var(--mat)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+.btn{border:0;border-radius:14px;padding:12px 20px;font-weight:800;font-size:17px;background:var(--plate);border:2px solid var(--matEdge)}
+.btn.primary{background:var(--pump);border-color:var(--pump);color:#fff}
+.btn:hover{filter:brightness(1.05)}
+.hintBox{margin-top:14px;padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--gold) 18%,var(--mat));border:2px dashed var(--gold);font-size:18px;line-height:1.5}
+.msg{margin-top:16px;font-size:22px;font-weight:800}
+.msg.good{color:var(--good)} .msg.bad{color:var(--bad)}
+.steal{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.steal button{border:0;color:#fff;border-radius:12px;padding:10px 16px;font-weight:800;font-size:16px}
+.steal .btn{color:var(--ink);background:var(--plate)}
+.steps{margin-top:16px;padding:14px 18px 14px 20px;border-radius:16px;background:var(--plate);border:2px solid var(--rim)}
+.steps h3{margin:0 0 8px;font-size:19px;color:var(--sage)}
+.steps ol{margin:0;padding-left:1.4em;font-size:clamp(17px,1.9vw,21px);line-height:1.75}
+.golden{text-align:center;padding:36px 20px 40px}
+.golden .gt{font-size:110px;display:block;line-height:1;animation:spin 1.2s ease}
+@keyframes spin{from{transform:rotate(-20deg) scale(.3)}60%{transform:rotate(10deg) scale(1.15)}}
+.golden h2{font-size:clamp(36px,6vw,60px);color:var(--gold);margin:10px 0 4px}
+.golden p{font-size:20px;font-weight:700;color:var(--soft);margin:0 0 22px}
+.endList{display:grid;gap:10px;margin:18px 0}
+.endRow{display:flex;align-items:center;gap:12px;background:var(--plate);border:2px solid var(--rim);border-radius:16px;padding:10px 14px;font-weight:800;font-size:19px}
+.endRow .pl{font-family:"Lilita One",system-ui,sans-serif;font-size:26px;width:2ch}
+.endRow .fe{font-size:20px;letter-spacing:2px;margin-left:auto;text-align:right}
+.fall{position:fixed;top:0;z-index:50;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{from{transform:translateY(-12vh) rotate(0)}to{transform:translateY(112vh) rotate(560deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 class="display">🦃 Turkey Trot Review</h1>
+    <span class="unit">Algebra 2C, Unit 2: Solving Quadratics</span>
+    <div class="tools">
+      <button class="chip" id="soundBtn" aria-pressed="true">🔊 Sound on</button>
+      <button class="chip" id="endBtn" hidden>End game</button>
+      <button class="chip" id="setupBtn" hidden>New game</button>
+    </div>
+  </header>
+  <main id="app"></main>
+</div>
+<div id="modal"></div>
+<div class="sr" aria-live="polite" id="live"></div>
+<script>
+// ===== Question engine: Unit 2 Solving Quadratics =====
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;};
+const nz=(a,b)=>{let v;do{v=R(a,b);}while(v===0);return v;};
+const isSq=n=>n>=0&&Math.round(Math.sqrt(n))**2===n;
+const MINUS='\u2212';
+const V=v=>`<i>${v}</i>`;
+const num=n=>n<0?MINUS+Math.abs(n):String(n);
+const pickVar=()=>pick(['x','x','x','n','m','a','p','y','k']);
+const qVar=()=>pick(['x','x','n','m','p','y']);
+const pr=n=>`(${num(n)})`;
+const addT=(a,b,v)=>`${mono(a,v,1)} ${b<0?MINUS:'+'} ${mono(Math.abs(b),v,1)}`;
+
+function poly(cs,v='x'){
+  const n=cs.length-1;let out='';
+  cs.forEach((c,i)=>{
+    if(c===0)return;
+    const e=n-i,abs=Math.abs(c);
+    let body=(abs===1&&e>0)?'':String(abs);
+    if(e>0)body+=V(v)+(e>1?`<sup>${e}</sup>`:'');
+    if(out==='')out=(c<0?MINUS:'')+body;
+    else out+=(c<0?` ${MINUS} `:' + ')+body;
+  });
+  return out||'0';
+}
+const bin=(m,n,v)=>`(${poly([m,n],v)})`;
+const mono=(c,v,e)=>poly([c,...Array(e).fill(0)],v);
+function expand(p,q){const r=Array(p.length+q.length-1).fill(0);p.forEach((a,i)=>q.forEach((b,j)=>r[i+j]+=a*b));return r;}
+const rad=n=>`<span class="rad"><span class="rs">\u221A</span><span class="rn">${n}</span></span>`;
+const frac=(t,b)=>`<span class="frac"><span class="ft">${t}</span><span class="fb">${b}</span></span>`;
+function simplifyRad(n){for(let s=Math.floor(Math.sqrt(n));s>1;s--){if(n%(s*s)===0)return[s,n/(s*s)];}return[1,n];}
+function radTerm(c,t,imag=false){
+  const iS=imag?'<i>i</i>':'';
+  if(t===1){if(c===1)return imag?'<i>i</i>':'1';if(c===-1)return imag?MINUS+'<i>i</i>':MINUS+'1';return num(c)+iS;}
+  const co=c===1?'':c===-1?MINUS:num(c);
+  return co+iS+rad(t);
+}
+function sqrtForm(e){const[s,t]=simplifyRad(Math.abs(e));return radTerm(s,t,e<0);}
+function rat(p,q){if(q<0){p=-p;q=-q;}const g=gcd(p,q)||1;p/=g;q/=g;if(q===1)return num(p);return(p<0?MINUS:'')+frac(Math.abs(p),q);}
+function ro(v,roots){
+  const rs=roots.map(r=>Array.isArray(r)?r:[r,1]).sort((a,b)=>a[0]/a[1]-b[0]/b[1]);
+  const key=rs.map(r=>(r[0]/r[1]).toFixed(6)).join('|');
+  if(rs.length===2&&Math.abs(rs[0][0]/rs[0][1]-rs[1][0]/rs[1][1])<1e-9)return null;
+  const html=rs.map(r=>`${V(v)} = ${rat(r[0],r[1])}`).join(' <span class="or">or</span> ');
+  return{html,key};
+}
+function qfExpr(v,B,D,den){
+  if(D===0)return null;
+  const[s,t]=simplifyRad(Math.abs(D));
+  if(D>0&&t===1)return null;
+  const g=gcd(gcd(B,s),den);
+  const B2=B/g,S2=s/g,d2=den/g;
+  const pm=radTerm(S2,t,D<0);
+  const numer=B2===0?`\u00B1${pm}`:`${num(B2)} \u00B1 ${pm}`;
+  return`${V(v)} = ${d2===1?numer:frac(numer,d2)}`;
+}
+const H=h=>h?{html:h,key:h}:null;
+const P=(c,v)=>({html:poly(c,v),key:c.join()});
+const eq0=(c,v)=>`${poly(c,v)} = 0`;
+const sigIn=(arr,list)=>list.some(l=>l.join()===arr.join());
+
+// ---------- Category 1: Simplify (multiplying) ----------
+function mul1(){
+  const v=pickVar(),a=nz(-9,9),b=nz(-9,9);if(a+b===0)return null;
+  const C=[1,a+b,a*b];
+  return{instr:'Simplify the expression.',expr:`${bin(1,a,v)}${bin(1,b,v)}`,
+    correct:P(C,v),dis:[P([1,0,a*b],v),P([1,a-b,a*b],v),P([1,a+b,-a*b],v),P([1,a*b,a+b],v)],
+    fb:()=>P([1,a+b+nz(-3,3),a*b],v),
+    hint:'FOIL it: multiply First, Outer, Inner, Last. Then combine the two middle terms.',
+    steps:[`First: ${V(v)} \u00B7 ${V(v)} = ${mono(1,v,2)}`,`Outer + Inner: ${addT(b,a,v)} = ${mono(a+b,v,1)}`,`Last: ${pr(a)}${pr(b)} = ${num(a*b)}`,`Answer: <b>${poly(C,v)}</b>`]};
+}
+function mul2(){
+  const v=pickVar(),b=pick([1,-1])*R(2,10);if(b===-5||b===7)return null;
+  const C=[1,2*b,b*b];
+  return{instr:'Simplify the expression.',expr:`(${poly([1,b],v)})<sup>2</sup>`,
+    correct:P(C,v),dis:[P([1,0,b*b],v),P([1,b,b*b],v),P([1,2*b,-b*b],v),P([1,0,-b*b],v)],
+    fb:()=>P([1,2*b+nz(-2,2),b*b],v),
+    hint:`Write it out twice: ${bin(1,b,v)}${bin(1,b,v)}. Then FOIL. The answer is NOT just ${mono(1,v,2)} + ${b*b}!`,
+    steps:[`Write it twice: ${bin(1,b,v)}${bin(1,b,v)}`,`First: ${mono(1,v,2)}`,`Outer + Inner: ${addT(b,b,v)} = ${mono(2*b,v,1)}`,`Last: ${pr(b)}${pr(b)} = ${b*b}`,`Answer: <b>${poly(C,v)}</b>`]};
+}
+function mul3(){
+  const v=pickVar(),a=R(2,5),c=R(2,5),b=nz(-7,7),d=nz(-7,7);
+  if(gcd(a,b)!==1||gcd(c,d)!==1)return null;
+  const ex=[[5,-3,2,1],[4,-5,3,2],[3,-4,3,-5],[5,8,5,-8],[2,3,2,3]];
+  if(sigIn([a,b,c,d],ex)||sigIn([c,d,a,b],ex))return null;
+  const mid=a*d+b*c;if(mid===0)return null;
+  const C=[a*c,mid,b*d];
+  return{instr:'Simplify the expression.',expr:`${bin(a,b,v)}${bin(c,d,v)}`,
+    correct:P(C,v),dis:[P([a*c,0,b*d],v),P([a*c,mid,-b*d],v),P([a*c,a*d-b*c,b*d],v),P([a*c,-mid,b*d],v),P([a*c,b+d,b*d],v)],
+    fb:()=>P([a*c,mid+nz(-3,3),b*d],v),
+    hint:'FOIL: First, Outer, Inner, Last. Multiply the numbers in front of the variables too!',
+    steps:[`First: ${mono(a,v,1)} \u00B7 ${mono(c,v,1)} = ${mono(a*c,v,2)}`,`Outer: (${mono(a,v,1)})${pr(d)} = ${mono(a*d,v,1)}`,`Inner: ${pr(b)}(${mono(c,v,1)}) = ${mono(b*c,v,1)}`,`Last: ${pr(b)}${pr(d)} = ${num(b*d)}`,`Combine the middle: ${addT(a*d,b*c,v)} = ${mono(mid,v,1)}`,`Answer: <b>${poly(C,v)}</b>`]};
+}
+function mul4(){
+  const v=pickVar(),a=nz(-6,6),b=nz(-5,5),c=nz(-6,6);
+  const C=[1,b+a,c+a*b,a*c];if(C[1]===0||C[2]===0)return null;
+  return{instr:'Simplify the expression.',expr:`${bin(1,a,v)}(${poly([1,b,c],v)})`,
+    correct:P(C,v),dis:[P([1,b,c,a*c],v),P([1,b-a,c-a*b,-a*c],v),P([1,b+a,c+a*b,-a*c],v),P([1,b+a,c,a*c],v)],
+    fb:()=>P([1,b+a,c+a*b+nz(-3,3),a*c],v),
+    hint:`Multiply ${V(v)} by every term in the second parentheses, then multiply ${num(a)} by every term. Combine like terms.`,
+    steps:[`${V(v)} \u00B7 (${poly([1,b,c],v)}) = ${poly([1,b,c,0],v)}`,`${num(a)} \u00B7 (${poly([1,b,c],v)}) = ${poly([a,a*b,a*c],v)}`,`Combine like terms: ${poly([b,0,0],v)} ${a<0?MINUS:'+'} ${poly([Math.abs(a),0,0],v)} = ${poly([b+a,0,0],v)} and ${addT(c,a*b,v)} = ${mono(c+a*b,v,1)}`,`Answer: <b>${poly(C,v)}</b>`]};
+}
+
+// ---------- Category 2: Factor completely ----------
+function fac1(){
+  const v=pickVar(),g=R(2,6),k=nz(-9,9);
+  if((g===3&&k===6)||(g===4&&k===5)||(g===3&&k===-7))return null;
+  const ans=`${mono(g,v,2)}${bin(1,k,v)}`;
+  return{instr:'Factor completely.',expr:poly([g,g*k,0,0],v),
+    correct:H(ans),dis:[H(`${mono(g,v,1)}(${poly([1,k,0],v)})`),H(`${mono(1,v,2)}(${poly([g,g*k],v)})`),H(`${mono(g,v,2)}${bin(1,-k,v)}`),H(`${mono(g,v,2)}${bin(1,g*k,v)}`)],
+    fb:()=>H(`${mono(g,v,2)}${bin(1,k+nz(-3,3),v)}`),
+    hint:`Find the GCF: the biggest number that divides ${g} and ${Math.abs(g*k)}, AND the most ${V(v)}'s both terms share.`,
+    steps:[`Biggest number in both: ${g}. Fewest ${V(v)}'s in both: ${mono(1,v,2)}. GCF = ${mono(g,v,2)}`,`${mono(g,v,3)} \u00F7 ${mono(g,v,2)} = ${V(v)}`,`${mono(g*k,v,2)} \u00F7 ${mono(g,v,2)} = ${num(k)}`,`Answer: <b>${ans}</b>`]};
+}
+function fac2(){
+  const v=pickVar(),a=R(1,3),b=R(2,10);
+  if(gcd(a,b)!==1)return null;
+  if((a===1&&(b===3||b===7))||(a===3&&b===5))return null;
+  const A=a===1?V(v):`${a}${V(v)}`;
+  const ans=`${bin(a,-b,v)}${bin(a,b,v)}`;
+  return{instr:'Factor completely.',expr:poly([a*a,0,-b*b],v),
+    correct:H(ans),dis:[H(`${bin(a,-b,v)}<sup>2</sup>`),H(`${bin(a,b,v)}<sup>2</sup>`),H('Prime (it cannot be factored)')],
+    fb:()=>H(`${bin(a,-(b+1),v)}${bin(a,b+1,v)}`),
+    hint:'Two perfect squares with a minus between them? Use the pattern A\u00B2 \u2212 B\u00B2 = (A \u2212 B)(A + B).',
+    steps:[`Both terms are perfect squares: ${poly([a*a,0,0],v)} = (${A})<sup>2</sup> and ${b*b} = ${b}<sup>2</sup>`,`Difference of squares: A\u00B2 \u2212 B\u00B2 = (A \u2212 B)(A + B)`,`Answer: <b>${ans}</b>`]};
+}
+function fac3(){
+  const v=pickVar(),a=R(2,5),p=nz(-7,7),q=nz(-9,9);
+  if(gcd(a,q)!==1)return null;
+  if(q<0&&isSq(a)&&isSq(-q))return null;
+  if((a===3&&p===-7&&q===7)||(a===2&&p===3&&q===-5))return null;
+  const E=[a,a*p,q,p*q];
+  const F=(pp,aa,qq,lin)=>{const h=lin?`${bin(aa,pp,v)}(${poly([1,0,qq],v)})`:`${bin(1,pp,v)}(${poly([aa,0,qq],v)})`;const k=lin?expand([aa,pp],[1,0,qq]):expand([1,pp],[aa,0,qq]);return{html:h,key:k.join()};};
+  const ans=F(p,a,q);
+  const sign=q<0?MINUS:'+';
+  return{instr:'Factor completely.',expr:poly(E,v),
+    correct:ans,dis:[F(-p,a,q),F(p,a,-q),F(-p,a,-q),F(p,a,q,true)],
+    fb:()=>F(p+nz(-2,2),a,q),
+    hint:'Four terms? Factor by grouping: put the first two terms together and the last two together, and pull a GCF out of each group.',
+    steps:[`Group: (${poly([a,a*p,0,0],v)}) + (${poly([q,p*q],v)})`,`Factor each group: ${mono(a,v,2)}${bin(1,p,v)} ${sign} ${Math.abs(q)}${bin(1,p,v)}`,`Both groups share ${bin(1,p,v)}, so pull it out`,`Answer: <b>${ans.html}</b>`]};
+}
+function fac4(){
+  const v=pickVar(),m=R(1,4),p=R(1,4),n=nz(-7,7),r=nz(-7,7);
+  if(m*p<2||m*p>12)return null;
+  if(gcd(m,n)!==1||gcd(p,r)!==1)return null;
+  const E=expand([m,n],[p,r]);if(E[1]===0)return null;
+  if(sigIn(E,[[5,-23,12],[6,-17,12],[5,-22,8]]))return null;
+  const F=(a,b,c,d)=>({html:`${bin(a,b,v)}${bin(c,d,v)}`,key:expand([a,b],[c,d]).join()});
+  const ans=F(m,n,p,r);
+  return{instr:'Factor completely.',expr:poly(E,v),
+    correct:ans,dis:[F(m,-n,p,-r),F(m,r,p,n),F(m,-n,p,r),F(m,n,p,-r),F(m,-r,p,-n)],
+    fb:()=>F(m,n+nz(-2,2),p,r),
+    hint:`Multiply a\u00B7c = (${E[0]})${pr(E[2])} = ${num(E[0]*E[2])}. Find two numbers that multiply to ${num(E[0]*E[2])} and add to ${num(E[1])}.`,
+    steps:[`a\u00B7c = (${E[0]})${pr(E[2])} = ${num(E[0]*E[2])}`,`Two numbers that multiply to ${num(E[0]*E[2])} and add to ${num(E[1])}: <b>${num(m*r)}</b> and <b>${num(n*p)}</b>`,`Split the middle: ${poly([E[0],m*r,0],v)} ${n*p<0?MINUS:'+'} ${mono(Math.abs(n*p),v,1)} ${E[2]<0?MINUS:'+'} ${Math.abs(E[2])}`,`Group: ${mono(m,v,1)}${bin(p,r,v)} ${n<0?MINUS:'+'} ${Math.abs(n)}${bin(p,r,v)}`,`Answer: <b>${ans.html}</b>`]};
+}
+
+// ---------- Category 3: Solve by factoring ----------
+function solveA(v,r1,r2,ex){
+  if(r1===r2)return null;
+  const C=[1,-(r1+r2),r1*r2];if(sigIn(C,ex))return null;
+  return{instr:'Solve by factoring.',expr:eq0(C,v),
+    correct:ro(v,[r1,r2]),dis:[ro(v,[-r1,-r2]),ro(v,[r1,-r2]),ro(v,[-r1,r2]),ro(v,[r1*r2,-(r1+r2)])],
+    fb:()=>ro(v,[r1+nz(-2,2),r2]),
+    hint:`Find two numbers that multiply to ${num(C[2])} and add to ${num(C[1])}. Then set each factor equal to 0. Careful: the answers have the OPPOSITE signs!`,
+    steps:[`Two numbers that multiply to ${num(C[2])} and add to ${num(C[1])}: ${num(-r1)} and ${num(-r2)}`,`Factor: ${bin(1,-r1,v)}${bin(1,-r2,v)} = 0`,`Set each factor = 0: ${poly([1,-r1],v)} = 0 and ${poly([1,-r2],v)} = 0`,`Answer: <b>${ro(v,[r1,r2]).html}</b>`]};
+}
+const SOLVE_EX=[[1,1,-20],[1,-3,-28],[1,-4,-21]];
+function sol1(){const v=pickVar(),r1=R(1,9),r2=R(1,9);return solveA(v,r1,r2,SOLVE_EX);}
+function sol2(){const v=pickVar(),r1=R(1,9),r2=-R(1,9);if(r1===-r2)return null;return solveA(v,r1,r2,SOLVE_EX);}
+function solveB(v,m,n,p,q){
+  // (m v - n)(p v - q) = 0
+  const C=expand([m,-n],[p,-q]);if(C[1]===0)return null;
+  if(sigIn(C,[[4,13,-12],[3,11,-4],[3,-14,15]]))return null;
+  const ans=ro(v,[[n,m],[q,p]]);if(!ans)return null;
+  const solveStep=(a,b)=>a===1?`${poly([1,-b],v)} = 0 \u2192 ${V(v)} = ${num(b)}`:`${poly([a,-b],v)} = 0 \u2192 ${mono(a,v,1)} = ${num(b)} \u2192 ${V(v)} = ${rat(b,a)}`;
+  return{instr:'Solve by factoring.',expr:eq0(C,v),
+    correct:ans,dis:[ro(v,[[-n,m],[-q,p]]),ro(v,[n,q]),ro(v,[[m,n],[p,q]]),ro(v,[[n,m],[-q,p]]),ro(v,[[-n,m],[q,p]])],
+    fb:()=>ro(v,[[n+nz(-2,2),m],[q,p]]),
+    hint:`Factor with the a\u00B7c method (a\u00B7c = ${num(C[0]*C[2])}). When a factor looks like (3${V(v)} \u2212 2), solve 3${V(v)} \u2212 2 = 0 to get ${V(v)} = ${frac(2,3)}.`,
+    steps:[`Factor: ${bin(m,-n,v)}${bin(p,-q,v)} = 0`,`Set each factor = 0:`,solveStep(m,n),solveStep(p,q),`Answer: <b>${ans.html}</b>`]};
+}
+function sol3(){const v=pickVar(),m=R(2,5),n=nz(-9,9),q=nz(-8,8);if(gcd(m,n)!==1)return null;return solveB(v,m,n,1,q);}
+function sol4(){const v=pickVar(),m=R(2,4),p=R(2,3),n=nz(-7,7),q=nz(-7,7);if(gcd(m,n)!==1||gcd(p,q)!==1)return null;return solveB(v,m,n,p,q);}
+
+// ---------- Category 4: Simplify radicals ----------
+function rad1(){
+  const c=pick([1,-1])*R(2,9),k=R(2,12);
+  if((c===-8&&k===4)||(c===-6&&k===5)||(c===-3&&k===5))return null;
+  return{instr:'Simplify.',expr:`${num(c)}${rad(k*k)}`,
+    correct:H(num(c*k)),dis:[H(num(c*k*k)),H(num(c+k)),H(num(-c*k)),H(num(c*k*2))],
+    fb:()=>H(num(c*k+nz(-5,5))),
+    hint:`${rad(k*k)} is a perfect square. What number times itself is ${k*k}? Then multiply by ${num(c)}.`,
+    steps:[`${rad(k*k)} = ${k} because ${k} \u00B7 ${k} = ${k*k}`,`${pr(c)}(${k}) = ${num(c*k)}`,`Answer: <b>${num(c*k)}</b>`]};
+}
+function rad2(){
+  const k=R(2,15);if(k===12||k===13)return null;
+  const ans=radTerm(k,1,true);
+  return{instr:'Simplify.',expr:rad(MINUS+(k*k)),
+    correct:H(ans),dis:[H(num(-k)),H(String(k)),H(radTerm(-k,1,true)),H(radTerm(k*k,1,true))],
+    fb:()=>H(radTerm(k+nz(-2,2),1,true)),
+    hint:`${rad(MINUS+'1')} = <i>i</i>. So ${rad(MINUS+(k*k))} = ${rad(k*k)} \u00B7 <i>i</i>.`,
+    steps:[`Split it: ${rad(MINUS+(k*k))} = ${rad(k*k)} \u00B7 ${rad(MINUS+'1')}`,`${rad(k*k)} = ${k} and ${rad(MINUS+'1')} = <i>i</i>`,`Answer: <b>${ans}</b>`]};
+}
+function rad3(){
+  const s=R(2,6),t=pick([2,3,5,6,7]),n=s*s*t;
+  if([80,72,200,18,144].includes(n))return null;
+  const ans=radTerm(s,t,true);
+  return{instr:'Simplify.',expr:rad(MINUS+n),
+    correct:H(ans),dis:[H(radTerm(-s,t)),H(radTerm(s,t)),H(radTerm(s*s,t,true)),H(radTerm(t,s*s>n?1:s,true))],
+    fb:()=>H(radTerm(s+nz(-2,2)||1,t,true)),
+    hint:`Pull out ${rad(MINUS+'1')} as <i>i</i>. Then find the biggest perfect square that divides ${n} (try 4, 9, 16, 25, 36\u2026).`,
+    steps:[`Biggest perfect square factor: ${n} = ${s*s} \u00B7 ${t}`,`${rad(MINUS+n)} = ${rad(s*s)} \u00B7 ${rad(t)} \u00B7 ${rad(MINUS+'1')}`,`= ${s} \u00B7 ${rad(t)} \u00B7 <i>i</i>`,`Answer: <b>${ans}</b>`]};
+}
+function rad4(){
+  const c=R(2,6),s=R(2,6),t=pick([2,3,5,6,7,10,11]),n=s*s*t;
+  if((c===3&&n===200)||(c===2&&n===147)||(c===2&&n===72))return null;
+  const ans=radTerm(c*s,t);
+  return{instr:'Simplify.',expr:`${c}${rad(n)}`,
+    correct:H(ans),dis:[H(radTerm(c+s,t)),H(radTerm(c*s*s,t)),H(radTerm(s,t)),H(radTerm(c*t,s))],
+    fb:()=>H(radTerm(c*s+nz(-3,3),t)),
+    hint:`Find the biggest perfect square that divides ${n}. Take its square root out front, and don't forget to multiply by the ${c} already there.`,
+    steps:[`Biggest perfect square factor: ${n} = ${s*s} \u00B7 ${t}`,`${c}${rad(n)} = ${c} \u00B7 ${rad(s*s)} \u00B7 ${rad(t)} = ${c} \u00B7 ${s} \u00B7 ${rad(t)}`,`Answer: <b>${ans}</b>`]};
+}
+
+// ---------- Category 5: Square roots ----------
+function sq1(){
+  const v=pickVar(),k=R(2,10),c=nz(-20,20),d=k*k+c;
+  const ans=`${V(v)} = \u00B1${k}`;
+  const wrongSide=d+c!==0?`${V(v)} = \u00B1${sqrtForm(d+c)}`:null;
+  return{instr:'Solve by taking square roots.',expr:`${poly([1,0,c],v)} = ${num(d)}`,
+    correct:H(ans),dis:[H(`${V(v)} = ${k}`),H(wrongSide),H(`${V(v)} = \u00B1${k*k}`),H(`${V(v)} = \u00B1${k}<i>i</i>`)],
+    fb:()=>H(`${V(v)} = \u00B1${k+nz(-2,2)}`),
+    hint:`Get ${mono(1,v,2)} alone first (undo the ${num(c)}). Then square root both sides. Don't forget \u00B1!`,
+    steps:[`${c>0?'Subtract':'Add'} ${Math.abs(c)} on both sides: ${mono(1,v,2)} = ${k*k}`,`Square root both sides: ${V(v)} = \u00B1${rad(k*k)}`,`Answer: <b>${ans}</b>`]};
+}
+function sq2(){
+  const v=pickVar(),h=nz(-8,8),k=R(2,10);
+  if((h===-3&&k===7)||(h===2&&k===9)||k===Math.abs(h))return null;
+  const ans=ro(v,[-h+k,-h-k]);
+  return{instr:'Solve by taking square roots.',expr:`(${poly([1,h],v)})<sup>2</sup> = ${k*k}`,
+    correct:ans,dis:[ro(v,[h+k,h-k]),ro(v,[k-h]),ro(v,[-h+k*k,-h-k*k]),ro(v,[k*k-h])],
+    fb:()=>ro(v,[-h+k+nz(-2,2),-h-k]),
+    hint:`Square root both sides first: ${poly([1,h],v)} = \u00B1${k}. Then solve two small equations.`,
+    steps:[`Square root both sides: ${poly([1,h],v)} = \u00B1${k}`,`${poly([1,h],v)} = ${k} \u2192 ${V(v)} = ${k} ${h>0?MINUS:'+'} ${Math.abs(h)} = ${num(k-h)}`,`${poly([1,h],v)} = ${MINUS}${k} \u2192 ${V(v)} = ${MINUS}${k} ${h>0?MINUS:'+'} ${Math.abs(h)} = ${num(-k-h)}`,`Answer: <b>${ans.html}</b>`]};
+}
+function sq3(){
+  const v=pickVar(),a=R(1,4),k=R(2,9),c=R(2,20),d=c-a*k*k;
+  if((a===3&&c===10&&d===-23)||(a===2&&c===9&&d===-41)||(a===1&&c===10&&d===2))return null;
+  const ans=`${V(v)} = \u00B1${radTerm(k,1,true)}`;
+  const st=[`Subtract ${c} on both sides: ${mono(a,v,2)} = ${num(d-c)}`];
+  if(a>1)st.push(`Divide both sides by ${a}: ${mono(1,v,2)} = ${num(-k*k)}`);
+  st.push(`Square root both sides: ${V(v)} = \u00B1${rad(MINUS+(k*k))} = \u00B1${k}<i>i</i>`,`Answer: <b>${ans}</b>`);
+  return{instr:'Solve by taking square roots.',expr:`${poly([a,0,c],v)} = ${num(d)}`,
+    correct:H(ans),dis:[H(`${V(v)} = \u00B1${k}`),H('No solution'),H(`${V(v)} = \u00B1${k*k}<i>i</i>`),H(`${V(v)} = ${k}<i>i</i>`)],
+    fb:()=>H(`${V(v)} = \u00B1${k+1}<i>i</i>`),
+    hint:`Get ${mono(1,v,2)} alone. If you end up with the square root of a negative, that's okay: ${rad(MINUS+'1')} = <i>i</i>.`,
+    steps:st};
+}
+function sq4(){
+  const v=pickVar(),h=nz(-8,8),c=R(2,15),s=R(1,4),t=pick([2,3,5,6,7]),N=s*s*t,d=N-c;
+  if(h===3&&c===8&&d===53)return null;
+  const ans=`${V(v)} = ${num(h)} \u00B1 ${radTerm(s,t)}`;
+  return{instr:'Solve by taking square roots.',expr:`(${poly([1,-h],v)})<sup>2</sup> ${MINUS} ${c} = ${num(d)}`,
+    correct:H(ans),dis:[H(`${V(v)} = ${num(-h)} \u00B1 ${radTerm(s,t)}`),H(`${V(v)} = ${num(h)} \u00B1 ${radTerm(s,t,true)}`),H(`${V(v)} = ${num(h)} \u00B1 ${N}`),H(`${V(v)} = ${num(h)} + ${radTerm(s,t)}`)],
+    fb:()=>H(`${V(v)} = ${num(h)} \u00B1 ${radTerm(s+1,t)}`),
+    hint:`Add ${c} to both sides first. Then square root both sides (\u00B1!), simplify the radical, and finally ${h>0?'add':'subtract'} ${Math.abs(h)}.`,
+    steps:[`Add ${c} to both sides: (${poly([1,-h],v)})<sup>2</sup> = ${N}`,`Square root both sides: ${poly([1,-h],v)} = \u00B1${rad(N)}${s>1?` = \u00B1${radTerm(s,t)}`:''}`,`${h>0?'Add':'Subtract'} ${Math.abs(h)}: ${V(v)} = ${num(h)} \u00B1 ${radTerm(s,t)}`,`Answer: <b>${ans}</b>`]};
+}
+
+// ---------- Category 6: Quadratic formula ----------
+const QF_EX=[[1,-5,-24],[1,-1,-12],[9,-7,-1],[2,3,-4],[3,-2,-7],[3,3,-4],[2,0,-21],[4,-1,7]];
+function qfSetup(a,b,c){return`a = ${num(a)}, &nbsp;b = ${num(b)}, &nbsp;c = ${num(c)}`;}
+function qfDisc(a,b,c){const D=b*b-4*a*c;return`b\u00B2 ${MINUS} 4ac = (${num(b)})\u00B2 ${MINUS} 4(${num(a)})(${num(c)}) = ${num(D)}`;}
+const QF_HINT=`Write down a, b, and c. Then plug into ${V('x')} = ${frac(`${MINUS}b \u00B1 ${rad('b\u00B2 '+MINUS+' 4ac')}`,'2a')}. Find b\u00B2 \u2212 4ac first!`;
+function qf1(){
+  const v=qVar(),r1=nz(-9,9),r2=nz(-9,9);if(r1===r2)return null;
+  const b=-(r1+r2),c=r1*r2;if(sigIn([1,b,c],QF_EX))return null;
+  const D=b*b-4*c,s=Math.round(Math.sqrt(D));
+  const ans=ro(v,[r1,r2]);
+  return{instr:'Solve using the quadratic formula.',expr:eq0([1,b,c],v),
+    correct:ans,dis:[ro(v,[-r1,-r2]),ro(v,[r1,-r2]),ro(v,[-r1,r2]),ro(v,[[-b+s,1],[-b-s,1]])],
+    fb:()=>ro(v,[r1+nz(-2,2),r2]),hint:QF_HINT,
+    steps:[qfSetup(1,b,c),qfDisc(1,b,c),`${V(v)} = ${frac(`${num(-b)} \u00B1 ${rad(D)}`,2)} = ${frac(`${num(-b)} \u00B1 ${s}`,2)}`,`${frac(`${num(-b)} + ${s}`,2)} = ${num((-b+s)/2)} &nbsp; and &nbsp; ${frac(`${num(-b)} ${MINUS} ${s}`,2)} = ${num((-b-s)/2)}`,`Answer: <b>${ans.html}</b>`]};
+}
+function qf2(){
+  const v=qVar(),m=nz(-6,6),s=R(1,3),t=pick([2,3,5,6,7]),c=m*m-s*s*t;
+  const b=2*m;if(c===0||sigIn([1,b,c],QF_EX))return null;
+  const D=b*b-4*c;
+  const ans=qfExpr(v,-b,D,2);
+  return{instr:'Solve using the quadratic formula.',expr:eq0([1,b,c],v),
+    correct:H(ans),dis:[H(qfExpr(v,b,D,2)),H(`${V(v)} = ${num(-b)} \u00B1 ${radTerm(2*s,t)}`),H(qfExpr(v,-b,-D,2)),H(`${V(v)} = ${num(-m)} \u00B1 ${radTerm(2*s,t)}`)],
+    fb:()=>H(`${V(v)} = ${num(-m+nz(-2,2))} \u00B1 ${radTerm(s,t)}`),hint:QF_HINT,
+    steps:[qfSetup(1,b,c),qfDisc(1,b,c),`${V(v)} = ${frac(`${num(-b)} \u00B1 ${rad(D)}`,2)}`,`Simplify: ${rad(D)} = ${radTerm(2*s,t)}, so ${V(v)} = ${frac(`${num(-b)} \u00B1 ${radTerm(2*s,t)}`,2)}`,`Divide both parts by 2. Answer: <b>${ans}</b>`]};
+}
+function qfGeneral(v,a,b,c,complex){
+  const D=b*b-4*a*c;
+  if(complex?D>=0:(D<=0||isSq(D)))return null;
+  if(sigIn([a,b,c],QF_EX))return null;
+  const ans=qfExpr(v,-b,D,2*a);if(!ans)return null;
+  const[s,t]=simplifyRad(Math.abs(D));
+  const st=[qfSetup(a,b,c),qfDisc(a,b,c),`${V(v)} = ${frac(`${num(-b)} \u00B1 ${rad(num(D))}`,2*a)}`];
+  if(complex)st.push(`The number under the root is negative, so it makes an <i>i</i>: ${rad(num(D))} = ${radTerm(s,t,true)}`);
+  else if(s>1)st.push(`Simplify the radical: ${rad(D)} = ${radTerm(s,t)}`);
+  const gg=gcd(gcd(-b,s),2*a);
+  st.push(gg>1?`Divide every part by ${gg}. Answer: <b>${ans}</b>`:`Nothing reduces. Answer: <b>${ans}</b>`);
+  return{instr:'Solve using the quadratic formula.',expr:eq0([a,b,c],v),
+    correct:H(ans),dis:[H(qfExpr(v,b,D,2*a)),H(qfExpr(v,-b,D,a)),H(qfExpr(v,-b,-D,2*a)),H(qfExpr(v,-b,b*b+4*a*c,2*a)),H(qfExpr(v,-b,D,2))],
+    fb:()=>H(qfExpr(v,-b+nz(-3,3),D,2*a)),hint:QF_HINT,steps:st};
+}
+function qf3(){const v=qVar();return qfGeneral(v,R(2,5),nz(-9,9),nz(-9,9),false);}
+function qf4(){const v=qVar(),a=R(1,3),b=nz(-8,8),c=R(1,12);return qfGeneral(v,a,b,c,true);}
+
+// ---------- assembly ----------
+const CATS=[
+  {name:'Mashed Potato Multiplying',short:'Simplify',dish:'\u{1F954}',gens:[mul1,mul2,mul3,mul4]},
+  {name:'Stuffing Factoring',short:'Factor completely',dish:'\u{1F956}',gens:[fac1,fac2,fac3,fac4]},
+  {name:'Corny Solving',short:'Solve by factoring',dish:'\u{1F33D}',gens:[sol1,sol2,sol3,sol4]},
+  {name:'Radical Rolls',short:'Simplify radicals',dish:'\u{1F950}',gens:[rad1,rad2,rad3,rad4]},
+  {name:'Pumpkin Patch Roots',short:'Solve with square roots',dish:'\u{1F383}',gens:[sq1,sq2,sq3,sq4]},
+  {name:'Pie Formula',short:'Quadratic formula',dish:'\u{1F967}',gens:[qf1,qf2,qf3,qf4]}
+];
+function makeQuestion(cat,lvl){
+  for(let tries=0;tries<500;tries++){
+    const q=CATS[cat].gens[lvl]();
+    if(!q||!q.correct)continue;
+    const seen=new Set([q.correct.key]),opts=[q.correct];
+    for(const d of q.dis){if(opts.length>=4)break;if(!d||seen.has(d.key))continue;seen.add(d.key);opts.push(d);}
+    let g=0;while(opts.length<4&&g++<60){const d=q.fb();if(d&&!seen.has(d.key)){seen.add(d.key);opts.push(d);}}
+    if(opts.length<4)continue;
+    shuffle(opts);
+    return{instr:q.instr,expr:q.expr,choices:opts.map(o=>o.html),answer:opts.indexOf(q.correct),hint:q.hint,steps:q.steps};
+  }
+  throw new Error('gen failed '+cat+','+lvl);
+}
+if(typeof module!=='undefined')module.exports={makeQuestion,CATS};
+// ===== Game =====
+const TEAM_COLORS=['#B0233B','#3F6B2E','#C27A12','#2F5F8A'];
+const DEFAULT_NAMES=['Gobblers','Pilgrims','Pumpkin Pies','Cranberries'];
+const LVL_PTS=[100,200,300,400];
+const $=s=>document.querySelector(s);
+const app=$('#app'),modal=$('#modal');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let setup={n:2,names:[...DEFAULT_NAMES],timer:0};
+let S=null,M=null,timerId=null,soundOn=true;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function save(){try{localStorage.setItem('ttr-state',JSON.stringify({S,setup,soundOn}));}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem('ttr-state')||'null');if(d){if(d.setup)setup=d.setup;if(typeof d.soundOn==='boolean')soundOn=d.soundOn;if(d.S&&d.S.board)S=d.S;}}catch(e){}}
+function say(t){$('#live').textContent=t;}
+
+// ---- sound ----
+let AC=null;
+function ac(){if(!soundOn)return null;if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}if(AC.state==='suspended')AC.resume();return AC;}
+function note(a,f,st,dur,type='triangle',vol=.16,slideTo){const o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,st);if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,st+dur);g.gain.setValueAtTime(.0001,st);g.gain.exponentialRampToValueAtTime(vol,st+.02);g.gain.exponentialRampToValueAtTime(.0001,st+dur);o.connect(g);g.connect(a.destination);o.start(st);o.stop(st+dur+.02);}
+function gobble(){const a=ac();if(!a)return;const t=a.currentTime+.02;for(let k=0;k<4;k++){const st=t+k*.13,o=a.createOscillator(),l=a.createOscillator(),lg=a.createGain(),g=a.createGain(),f=a.createBiquadFilter();o.type='sawtooth';o.frequency.value=520-k*35;l.frequency.value=30;lg.gain.value=110;l.connect(lg);lg.connect(o.frequency);f.type='lowpass';f.frequency.value=1500;g.gain.setValueAtTime(.0001,st);g.gain.exponentialRampToValueAtTime(.16,st+.02);g.gain.exponentialRampToValueAtTime(.0001,st+.12);o.connect(f);f.connect(g);g.connect(a.destination);o.start(st);l.start(st);o.stop(st+.14);l.stop(st+.14);}}
+function wahwah(){const a=ac();if(!a)return;const t=a.currentTime+.02;note(a,330,t,.32,'triangle',.18,300);note(a,262,t+.36,.6,'triangle',.18,200);}
+function fanfare(){const a=ac();if(!a)return;const t=a.currentTime+.02;[523,659,784,1047].forEach((f,i)=>note(a,f,t+i*.11,.28,'square',.07));note(a,1047,t+.5,.6,'triangle',.14);}
+function blip(){const a=ac();if(!a)return;note(a,880,a.currentTime+.01,.08,'sine',.06);}
+
+function burst(chars,n=30){if(reduced)return;for(let i=0;i<n;i++){const e=document.createElement('span');e.className='fall';e.textContent=pick(chars);e.style.left=(Math.random()*100)+'vw';e.style.animationDuration=(1.8+Math.random()*1.8)+'s';e.style.animationDelay=(Math.random()*.5)+'s';e.style.fontSize=(18+Math.random()*28)+'px';document.body.appendChild(e);setTimeout(()=>e.remove(),4500);}}
+
+// ---- setup screen ----
+function renderSetup(){
+  S=null;closeModal(true);
+  $('#endBtn').hidden=true;$('#setupBtn').hidden=true;
+  const nameInputs=Array.from({length:setup.n},(_,i)=>`<input aria-label="Team ${i+1} name" data-i="${i}" maxlength="18" value="${esc(setup.names[i]||DEFAULT_NAMES[i])}" style="border-left-color:${TEAM_COLORS[i]}">`).join('');
+  app.innerHTML=`<section class="setup">
+    <span class="turkey" aria-hidden="true">🦃</span>
+    <h2 class="big display">Turkey Trot</h2>
+    <p class="lede">Pick a plate, solve the problem, and race your turkey to the pie. Every question is brand new each game.</p>
+    <div class="field"><span class="lbl">How many teams?</span>
+      <div class="seg" id="nSeg">${[1,2,3,4].map(n=>`<button aria-pressed="${n===setup.n}" data-n="${n}">${n===1?'Solo':n}</button>`).join('')}</div></div>
+    <div class="field"><span class="lbl">Team names</span><div class="names">${nameInputs}</div></div>
+    <div class="field"><span class="lbl">Timer per question</span>
+      <div class="seg" id="tSeg">${[[0,'No timer'],[60,'1 min'],[90,'90 sec'],[120,'2 min']].map(([v,l])=>`<button aria-pressed="${v===setup.timer}" data-t="${v}">${l}</button>`).join('')}</div></div>
+    <button class="go display" id="startBtn">Start the feast 🍽️</button>
+    <div class="how">
+      <b>How to play.</b> Teams take turns choosing a plate. Bigger numbers are harder problems.
+      Answer right to earn the points and that dish for your feast table.
+      Stuck? Peek at a hint, but the plate is then worth half.
+      Miss it, and another team can steal for half the points.
+      Watch for two hidden <b>Golden Turkey</b> plates worth double!
+      Keyboard: press <b>A–D</b> to answer, <b>H</b> for a hint, <b>Enter</b> to continue.
+    </div>
+  </section>`;
+  app.querySelectorAll('#nSeg button').forEach(b=>b.onclick=()=>{readNames();setup.n=+b.dataset.n;save();renderSetup();});
+  app.querySelectorAll('#tSeg button').forEach(b=>b.onclick=()=>{setup.timer=+b.dataset.t;app.querySelectorAll('#tSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b));save();});
+  $('#startBtn').onclick=()=>{readNames();startGame();};
+}
+function readNames(){app.querySelectorAll('.names input').forEach(inp=>{setup.names[+inp.dataset.i]=inp.value.trim()||DEFAULT_NAMES[+inp.dataset.i];});}
+
+function startGame(){
+  const board=CATS.map((c,ci)=>LVL_PTS.map((p,li)=>({q:makeQuestion(ci,li),used:false,golden:false,by:null})));
+  const spots=[];for(let ci=0;ci<6;ci++)for(let li=1;li<4;li++)spots.push([ci,li]);
+  shuffle(spots);let g=0;for(const[ci,li]of spots){if(g>=2)break;if(g===1&&spots[0][0]===ci)continue;board[ci][li].golden=true;g++;}
+  for(const k in lastPos)delete lastPos[k];
+  S={teams:setup.names.slice(0,setup.n).map((nm,i)=>({name:nm,color:TEAM_COLORS[i],score:0,dishes:[]})),turn:0,board,timer:setup.timer};
+  save();blip();renderGame();
+}
+function totalPossible(){let t=0;S.board.forEach(col=>col.forEach((c,li)=>t+=LVL_PTS[li]*(c.golden?2:1)));return t;}
+
+// ---- board ----
+function renderGame(hopIdx){
+  $('#endBtn').hidden=false;$('#setupBtn').hidden=false;
+  let cells='';
+  CATS.forEach(c=>{cells+=`<div class="cat"><span class="dish" aria-hidden="true">${c.dish}</span><span class="nm">${c.name}</span><span class="sk">${c.short}</span></div>`;});
+  for(let li=0;li<4;li++){
+    CATS.forEach((c,ci)=>{
+      const cell=S.board[ci][li];
+      if(cell.used){
+        const t=cell.by!=null?S.teams[cell.by]:null;
+        cells+=`<button class="plateBtn eaten ${t?'':'missed'}" disabled aria-label="${c.name} ${LVL_PTS[li]}, done"><span class="ate">${c.dish}</span>${t?`<span class="who" style="background:${t.color}">${esc(t.name)}</span>`:''}</button>`;
+      }else{
+        cells+=`<button class="plateBtn" data-ci="${ci}" data-li="${li}" aria-label="${c.name} for ${LVL_PTS[li]} points"><span class="pts">${LVL_PTS[li]}</span></button>`;
+      }
+    });
+  }
+  app.innerHTML=`<div class="boardScroll"><div class="board">${cells}</div></div><section class="trot" id="trot"></section>`;
+  app.querySelectorAll('.plateBtn[data-ci]').forEach(b=>b.onclick=()=>openTile(+b.dataset.ci,+b.dataset.li));
+  renderTrot(hopIdx);
+}
+const lastPos={};
+function renderTrot(hopIdx){
+  const goal=totalPossible()/Math.max(S.teams.length,1);
+  const cur=S.teams[S.turn];
+  const lanes=S.teams.map((t,i)=>{
+    const pct=Math.max(0,Math.min(1,t.score/goal));
+    const left=`calc(22px + (100% - 60px) * ${pct.toFixed(3)})`;
+    const startLeft=lastPos[i]||left;lastPos[i]=left;
+    return`<div class="lane ${i===S.turn&&S.teams.length>1?'active':''}">
+      <div class="tname"><span class="dot" style="background:${t.color}"></span><span class="t">${esc(t.name)}</span></div>
+      <div class="track" aria-hidden="true"><span class="finish">🥧</span><span class="runner ${hopIdx===i?'hop':''}" data-to="${left}" style="left:${startLeft}">🦃</span></div>
+      <div class="score"><button class="adj" data-i="${i}" data-d="-100" aria-label="Take 100 points from ${esc(t.name)}">−</button><span class="n">${t.score}</span><button class="adj" data-i="${i}" data-d="100" aria-label="Give 100 points to ${esc(t.name)}">+</button></div>
+      <div class="feast" aria-label="${esc(t.name)} feast">${t.dishes.join('')}</div>
+    </div>`;}).join('');
+  $('#trot').innerHTML=`<div class="trotHead"><h2 class="display">The Turkey Trot</h2>${S.teams.length>1?`<span class="upnext">Up next: <span style="color:${cur.color}">${esc(cur.name)}</span></span>`:''}</div>${lanes}`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>$('#trot')&&$('#trot').querySelectorAll('.runner').forEach(r=>r.style.left=r.dataset.to)));
+  $('#trot').querySelectorAll('.adj').forEach(b=>b.onclick=()=>{const t=S.teams[+b.dataset.i];t.score=Math.max(0,t.score+(+b.dataset.d));save();renderTrot();});
+}
+
+// ---- question modal ----
+function openTile(ci,li){
+  const cell=S.board[ci][li];
+  M={ci,li,cell,q:cell.q,phase:cell.golden?'golden':'ask',hint:false,out:new Set(),stealer:null,picked:null,timeLeft:S.timer,result:null,msg:''};
+  blip();
+  if(cell.golden){fanfare();burst(['🦃','✨','🌟'],18);}
+  renderModal();
+  if(!cell.golden)startTimer();
+}
+function base(){return LVL_PTS[M.li]*(M.cell.golden?2:1);}
+function worth(){const b=base();if(M.stealer!=null)return Math.round(b/2/50)*50||50;return M.hint?b/2:b;}
+function team(){return S.teams[M.stealer!=null?M.stealer:S.turn];}
+function startTimer(){
+  stopTimer();if(!S.timer)return;
+  M.timeLeft=S.timer;const t0=Date.now();
+  timerId=setInterval(()=>{M.timeLeft=Math.max(0,S.timer-(Date.now()-t0)/1000);const bar=$('#tbar');if(bar){bar.style.width=(100*M.timeLeft/S.timer)+'%';bar.parentElement.classList.toggle('low',M.timeLeft<10);}if(M.timeLeft<=0){stopTimer();timeUp();}},250);
+}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
+function timeUp(){if(M.phase!=='ask')return;wahwah();M.msg='Time\u2019s up!';afterMiss();}
+
+function renderModal(){
+  const c=CATS[M.ci],q=M.q;
+  const head=`<div class="cardHead"><span class="cd" aria-hidden="true">${c.dish}</span><div><div class="ct">${c.name}</div><div class="cs">${c.short}</div></div><span class="val">${M.cell.golden?'🦃 ':''}${base()}</span></div>`;
+  if(M.phase==='golden'){
+    modal.innerHTML=`<div class="overlay" role="dialog" aria-modal="true" aria-label="Golden Turkey"><div class="card">${head}<div class="golden"><span class="gt">🦃</span><h2 class="display">Golden Turkey!</h2><p>This plate is worth double: ${base()} points.</p><button class="btn primary" id="gogo">Show the problem</button></div></div></div>`;
+    $('#gogo').onclick=()=>{M.phase='ask';renderModal();startTimer();};$('#gogo').focus();return;
+  }
+  const t=team();
+  const done=M.phase==='done';
+  const choices=q.choices.map((h,i)=>{
+    let cls='choice math';
+    if(done){if(i===q.answer)cls+=' right';else if(M.out.has(i))cls+=' wrong';else cls+=' dim';}
+    else if(M.out.has(i))cls+=' wrong';
+    const dis=done||M.out.has(i)||M.phase==='stealPick';
+    return`<button class="${cls}" data-i="${i}" ${dis?'disabled':''}><span class="ltr">${'ABCD'[i]}</span><span>${h}</span></button>`;
+  }).join('');
+  let turnLine='';
+  if(!done&&M.phase!=='stealPick'){
+    const who=S.teams.length>1?`<span class="dot" style="background:${t.color}"></span><span><span style="color:${t.color}">${esc(t.name)}</span>${M.stealer!=null?' is stealing!':', you\u2019re up!'}</span>`:'<span>Your turn!</span>';
+    turnLine=`<div class="turnLine">${who}<span style="color:var(--soft)">Worth ${worth()} points</span></div>`;
+  }
+  let msg='';
+  if(M.msg)msg=`<div class="msg ${M.result==='good'?'good':'bad'}">${M.msg}</div>`;
+  let steal='';
+  if(M.phase==='stealPick'){
+    const others=S.teams.map((tm,i)=>({tm,i})).filter(o=>o.i!==S.turn);
+    steal=`<div style="margin-top:8px;font-weight:800;font-size:18px">Steal it for half the points! Which team wants it?</div><div class="steal">${others.map(o=>`<button data-steal="${o.i}" style="background:${o.tm.color}">${esc(o.tm.name)}</button>`).join('')}<button class="btn" id="noSteal">No steal, show the answer</button></div>`;
+  }
+  const hintBtn=(!done&&M.phase==='ask'&&!M.hint&&M.stealer==null)?`<button class="btn" id="hintBtn">💡 Hint (plate drops to half)</button>`:'';
+  const hint=M.hint?`<div class="hintBox math">💡 ${q.hint}</div>`:'';
+  const steps=done?`<div class="steps math"><h3>How to solve it</h3><ol>${q.steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>`:'';
+  const cont=done?`<button class="btn primary" id="contBtn">Back to the table</button>`:'';
+  const timer=(S.timer&&M.phase==='ask')?`<div class="timer"><div id="tbar" style="width:${100*M.timeLeft/S.timer}%"></div></div>`:'';
+  modal.innerHTML=`<div class="overlay" role="dialog" aria-modal="true" aria-label="${c.name} question"><div class="card">${head}<div class="cardBody">
+    ${turnLine}<div class="instr">${q.instr}</div><div class="expr math">${q.expr}</div>${timer}
+    <div class="choices">${choices}</div>${hint}${msg}${steal}${steps}
+    <div class="row">${hintBtn}${cont}</div></div></div></div>`;
+  modal.querySelectorAll('.choice:not([disabled])').forEach(b=>b.onclick=()=>choose(+b.dataset.i));
+  modal.querySelectorAll('[data-steal]').forEach(b=>b.onclick=()=>{M.stealer=+b.dataset.steal;M.phase='ask';M.msg='';blip();renderModal();});
+  const ns=$('#noSteal');if(ns)ns.onclick=()=>finish(null);
+  const hb=$('#hintBtn');if(hb)hb.onclick=useHint;
+  const cb=$('#contBtn');if(cb){cb.onclick=closeQuestion;cb.focus();}
+}
+function useHint(){if(M.phase!=='ask'||M.hint||M.stealer!=null)return;M.hint=true;blip();renderModal();}
+function choose(i){
+  if(M.phase!=='ask'||M.out.has(i))return;
+  if(i===M.q.answer){
+    stopTimer();
+    const pts=worth(),tm=team(),idx=M.stealer!=null?M.stealer:S.turn;
+    tm.score+=pts;tm.dishes.push(CATS[M.ci].dish);
+    M.result='good';M.msg=`${pick(['Gobble gobble!','Delicious!','Nailed it!','That\u2019s some fine math!','Pass the pie, that\u2019s right!'])} ${S.teams.length>1?esc(tm.name)+' earns':'You earn'} ${pts} points.`;
+    gobble();burst(['🍂','🍁','🍂','🌽','🥧']);
+    say(`Correct. ${tm.name} earns ${pts} points.`);
+    finish(idx);
+  }else{
+    M.out.add(i);wahwah();
+    if(M.stealer!=null){stopTimer();M.result='bad';M.msg='The steal missed. Here\u2019s the answer.';finish(null);return;}
+    stopTimer();M.msg='Not quite!';afterMiss();
+  }
+}
+function afterMiss(){
+  M.result='bad';
+  if(S.teams.length>1){M.phase='stealPick';say('Wrong answer. Another team may steal.');renderModal();}
+  else{M.msg+=' Here\u2019s the right answer.';finish(null);}
+}
+function finish(winner){
+  stopTimer();
+  if(winner==null&&M.result!=='good'){if(!M.msg||M.phase==='stealPick')M.msg='Here\u2019s the right answer.';M.result='bad';}
+  M.phase='done';M.cell.used=true;M.cell.by=winner;M.winner=winner;
+  save();renderModal();
+}
+function closeQuestion(){
+  const winner=M.winner;
+  closeModal();
+  S.turn=(S.turn+1)%S.teams.length;
+  save();
+  if(S.board.every(col=>col.every(c=>c.used))){renderGame();showEnd();return;}
+  renderGame(winner);
+}
+function closeModal(silent){stopTimer();modal.innerHTML='';M=null;}
+
+// ---- end ----
+function showEnd(){
+  stopTimer();
+  const ranked=S.teams.map((t,i)=>({...t,i})).sort((a,b)=>b.score-a.score);
+  const top=ranked[0].score,winners=ranked.filter(t=>t.score===top);
+  let title;
+  if(S.teams.length===1)title=`Feast complete: ${top} points!`;
+  else if(winners.length>1)title=`It\u2019s a tie at ${top}! Everybody gets pie.`;
+  else title=`${esc(winners[0].name)} win the feast!`;
+  const medals=['🥇','🥈','🥉','🍽️'];
+  modal.innerHTML=`<div class="overlay" role="dialog" aria-modal="true" aria-label="Game over"><div class="card"><div class="cardHead"><span class="cd">🦃</span><div><div class="ct">The feast is served</div><div class="cs">Final scores</div></div></div><div class="cardBody">
+    <h2 class="display" style="font-size:clamp(30px,5vw,50px);margin:0;color:var(--cran);text-align:center">${title}</h2>
+    <div class="endList">${ranked.map((t,r)=>`<div class="endRow"><span class="pl">${medals[Math.min(r,3)]}</span><span class="dot" style="width:14px;height:14px;border-radius:50%;background:${t.color}"></span><span>${esc(t.name)}</span><span class="display" style="font-size:24px">${t.score}</span><span class="fe">${t.dishes.join('')||'🍽️'}</span></div>`).join('')}</div>
+    <div class="row" style="justify-content:center"><button class="btn primary" id="again">Play again with new problems</button><button class="btn" id="toSetup">Change teams</button><button class="btn" id="seeBoard">Look at the board</button></div>
+  </div></div></div>`;
+  fanfare();burst(['🍂','🍁','🦃','🥧','🌽'],50);
+  $('#again').onclick=()=>{closeModal();startGame();};
+  $('#toSetup').onclick=()=>{renderSetup();save();};
+  $('#seeBoard').onclick=()=>closeModal();
+  $('#again').focus();
+}
+
+// ---- global controls ----
+function updSound(){const b=$('#soundBtn');b.textContent=soundOn?'🔊 Sound on':'🔇 Sound off';b.setAttribute('aria-pressed',soundOn);}
+$('#soundBtn').onclick=()=>{soundOn=!soundOn;updSound();save();if(soundOn)blip();};
+$('#endBtn').onclick=()=>{if(!S)return;if(confirm('End the game now and show final scores?'))showEnd();};
+$('#setupBtn').onclick=()=>{if(confirm('Start over? The current game will be lost.')){renderSetup();save();}};
+document.addEventListener('keydown',e=>{
+  if(!M||e.target.tagName==='INPUT')return;
+  const k=e.key.toLowerCase();
+  if(M.phase==='ask'&&'abcd1234'.includes(k)&&k.length===1){const i='abcd'.includes(k)?'abcd'.indexOf(k):+k-1;choose(i);}
+  else if(k==='h')useHint();
+  else if(k==='enter'){if(M.phase==='done'){e.preventDefault();closeQuestion();}else if(M.phase==='golden'){e.preventDefault();M.phase='ask';renderModal();startTimer();}}
+});
+
+load();updSound();
+if(S)renderGame();else renderSetup();
+</script>
+</body></html>
